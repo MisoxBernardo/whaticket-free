@@ -10,13 +10,14 @@ import { StartAllWhatsAppsSessions } from "./services/WbotServices/StartAllWhats
 const corsOptions = {
   origin: ["http://localhost:3000", "http://fenix.ticket:3000"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 };
 
 app.use(cors(corsOptions));
 
-const server = app.listen(process.env.PORT || 8080, () => {
-  logger.info(`Server started on port: ${process.env.PORT || 8080}`);
+const server = app.listen(process.env.PORT || 8081, () => {
+  logger.info(`Server started on port: ${process.env.PORT || 8081}`);
 });
 
 initIO(server);
