@@ -23,18 +23,8 @@ import { i18n } from "../../translate/i18n";
 
 import { AuthContext } from "../../context/Auth/AuthContext";
 
-// const Copyright = () => {
-// 	return (
-// 		<Typography variant="body2" color="textSecondary" align="center">
-// 			{"Copyleft "}
-// 			<Link color="inherit" href="https://github.com/canove">
-// 				Canove
-// 			</Link>{" "}
-// 			{new Date().getFullYear()}
-// 			{"."}
-// 		</Typography>
-// 	);
-// };
+// Importe a imagem
+import avatarImg from '../../assets/fenixlogo.png'; // Caminho da imagem na pasta src
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -45,7 +35,11 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    backgroundImage: `url(${avatarImg})`, // Usando a importação da imagem
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -77,9 +71,7 @@ const Login = () => {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlined />
-        </Avatar>
+        <Avatar className={classes.avatar} />
         <Typography component="h1" variant="h5">
           {i18n.t("login.title")}
         </Typography>
