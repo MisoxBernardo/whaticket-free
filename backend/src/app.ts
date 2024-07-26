@@ -19,10 +19,17 @@ const app = express();
 
 app.use(
   cors({
-    credentials: true,
-    origin: process.env.FRONTEND_URL
+    origin: (origin, callback) => {
+      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true
   })
 );
+
 
 app.use(express.json({
   limit: '50mb'
