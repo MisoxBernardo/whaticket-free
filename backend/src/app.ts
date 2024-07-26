@@ -17,18 +17,19 @@ Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 const app = express();
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
-  })
-);
+// Middleware para adicionar cabeçalhos CORS
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Permite todas as origens
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  
+  // Para permitir o preflight do CORS, você deve responder ao método OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
 
 app.use(express.json({
