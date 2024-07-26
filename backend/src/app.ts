@@ -13,43 +13,24 @@ import AppError from "./errors/AppError";
 import routes from "./routes";
 import { logger } from "./utils/logger";
 
-Sentry.init({ dsn: process.env.SENTRY_DSN });
+// Configuração do CORS
+const corsOptions = {
+  origin: ["http://localhost:3000", "http://fenix.ticket:3000"], // Adicione outras origens se necessário
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+};
 
 const app = express();
 
-// Middleware para adicionar cabeçalhos CORS
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Permite todas as origens
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  
-  // Para permitir o preflight do CORS, você deve responder ao método OPTIONS
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  
-  next();
-});
+// Middleware para CORS
+app.use(cors(corsOptions));
 
-
-app.use(express.json({
-  limit: '50mb'
-}));
-
+app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
+app.use(express.urlencoded({ limit: "250mb", parameterLimit: 200000, extended: true }));
 
-app.use(
-  express.urlencoded({
-    limit: "250mb",
-    parameterLimit: 200000,
-    extended: true
-  })
-);
-
-app.set("queues", {
-  messageQueue,
-  sendScheduledMessages
-})
+app.set("queues", { messageQueue, sendScheduledMessages });
 
 app.use(Sentry.Handlers.requestHandler());
 app.use("/public", express.static(uploadConfig.directory));

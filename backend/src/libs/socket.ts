@@ -13,13 +13,7 @@ let io: SocketIO;
 export const initIO = (httpServer: Server): SocketIO => {
   io = new SocketIO(httpServer, {
     cors: {
-      origin: (origin, callback) => {
-        if (origin === process.env.FRONTEND_URL || !origin) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: ["http://localhost:3000", "http://fenix.ticket:3000"], // Adicione outras origens se necessário
       methods: ["GET", "POST"],
       credentials: true
     }
@@ -29,75 +23,71 @@ export const initIO = (httpServer: Server): SocketIO => {
     const { token } = socket.handshake.query;
     let tokenData = null;
     try {
-      tokenData = verify(token as string, authConfig.secret);
+      tokenData = verify(token, authConfig.secret);
       logger.debug(tokenData, "io-onConnection: tokenData");
     } catch (error) {
       logger.error(error, "Error decoding token");
       socket.disconnect();
-      return;
+      return io;
     }
 
     const userId = tokenData.id;
 
-    let user: User | null = null;
+    let user: User = null;
     if (userId && userId !== "undefined" && userId !== "null") {
       user = await User.findByPk(userId, { include: [Queue] });
     }
 
-    if (user) {
-      logger.info("Client Connected");
-      
-      socket.on("joinChatBox", async (ticketId: string) => {
-        if (ticketId === "undefined") return;
-        
-        try {
-          const ticket = await Ticket.findByPk(ticketId);
-          if (ticket && (ticket.userId === user.id || user.profile === "admin")) {
+    logger.info("Client Connected");
+    socket.on("joinChatBox", (ticketId: string) => {
+      if (ticketId === "undefined") {
+        return;
+      }
+      Ticket.findByPk(ticketId).then(
+        ticket => {
+          if (ticket && (ticket?.userId === user.id || user.profile === "admin")) {
             logger.debug(`User ${user.id} joined ticket ${ticketId} channel`);
             socket.join(ticketId);
           } else {
             logger.info(`Invalid attempt to join channel of ticket ${ticketId} by user ${user.id}`);
           }
-        } catch (error) {
+        },
+        error => {
           logger.error(error, `Error fetching ticket ${ticketId}`);
         }
-      });
+      );
+    });
 
-      socket.on("joinNotification", () => {
-        if (user.profile === "admin") {
-          logger.debug(`Admin ${user.id} joined the notification channel.`);
-          socket.join("notification");
-        } else {
-          user.queues.forEach(queue => {
-            logger.debug(`User ${user.id} joined queue ${queue.id} channel.`);
-            socket.join(`queue-${queue.id}-notification`);
-          });
-        }
-      });
+    socket.on("joinNotification", () => {
+      if (user.profile === "admin") {
+        logger.debug(`Admin ${user.id} joined the notification channel.`);
+        socket.join("notification");
+      } else {
+        user.queues.forEach(queue => {
+          logger.debug(`User ${user.id} joined queue ${queue.id} channel.`);
+          socket.join(`queue-${queue.id}-notification`);
+        });
+      }
+    });
 
-      socket.on("joinTickets", (status: string) => {
-        if (user.profile === "admin") {
-          logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
-          socket.join(status);
-        } else {
-          user.queues.forEach(queue => {
-            logger.debug(`User ${user.id} joined queue ${queue.id} ${status} tickets channel.`);
-            socket.join(`queue-${queue.id}-${status}`);
-          });
-        }
-      });
+    socket.on("joinTickets", (status: string) => {
+      if (user.profile === "admin") {
+        logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
+        socket.join(`${status}`);
+      } else {
+        user.queues.forEach(queue => {
+          logger.debug(`User ${user.id} joined queue ${queue.id} ${status} tickets channel.`);
+          socket.join(`queue-${queue.id}-${status}`);
+        });
+      }
+    });
 
-      socket.on("disconnect", () => {
-        logger.info("Client disconnected");
-      });
-
-      socket.emit("ready");
-    } else {
-      logger.warn("User not found");
-      socket.disconnect();
-    }
+    socket.on("disconnect", () => {
+      logger.info("Client disconnected");
+    });
+    
+    socket.emit("ready");
   });
-
   return io;
 };
 

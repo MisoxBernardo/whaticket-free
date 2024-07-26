@@ -1,25 +1,18 @@
-import express from "express";
-import cors from "cors";
-import gracefulShutdown from "http-graceful-shutdown";
+import http from "http";
 import app from "./app";
 import { initIO } from "./libs/socket";
 import { logger } from "./utils/logger";
+import gracefulShutdown from "http-graceful-shutdown";
 import { StartAllWhatsAppsSessions } from "./services/WbotServices/StartAllWhatsAppsSessions";
 
-// Configurações do CORS
-const corsOptions = {
-  origin: ["http://localhost:3000", "http://fenix.ticket:3000"],
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-};
+// Inicializar o servidor HTTP
+const server = http.createServer(app);
 
-app.use(cors(corsOptions));
+initIO(server);
 
-const server = app.listen(process.env.PORT || 8081, () => {
+server.listen(process.env.PORT || 8081, () => {
   logger.info(`Server started on port: ${process.env.PORT || 8081}`);
 });
 
-initIO(server);
 StartAllWhatsAppsSessions();
 gracefulShutdown(server);
