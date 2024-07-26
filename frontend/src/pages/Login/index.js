@@ -24,7 +24,7 @@ import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
 // Importe a imagem
-import avatarImg from '../../assets/avatar.png'; // Caminho da imagem na pasta src
+import avatarImg from '../../assets/fenixlogo.png'; // Caminho da imagem na pasta src
 
 const useStyles = makeStyles((theme) => ({
   paper: {
