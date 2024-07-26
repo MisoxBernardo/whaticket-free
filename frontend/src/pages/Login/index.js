@@ -24,7 +24,7 @@ import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
 // Importe a imagem
-import avatarImg from '../../assets/fenixlogo.png'; // Caminho da imagem na pasta src
+import avatarImg from '../../assets/avatar.png'; // Caminho da imagem na pasta src
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,11 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    width: theme.spacing(7),
-    height: theme.spacing(7),
+    width: theme.spacing(7), // Defina um tamanho fixo para o Avatar
+    height: theme.spacing(7), // Defina um tamanho fixo para o Avatar
     backgroundImage: `url(${avatarImg})`, // Usando a importação da imagem
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundSize: 'cover', // Ajusta o tamanho da imagem para cobrir o Avatar
+    backgroundPosition: 'center', // Centraliza a imagem
+    backgroundRepeat: 'no-repeat', // Evita que a imagem se repita
   },
   form: {
     width: "100%", // Fix IE 11 issue.
