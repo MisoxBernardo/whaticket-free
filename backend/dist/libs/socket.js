@@ -25,7 +25,9 @@ let io;
 const initIO = (httpServer) => {
     io = new socket_io_1.Server(httpServer, {
         cors: {
-            origin: process.env.FRONTEND_URL
+            origin: "http://fenix.ticket:3000",
+            methods: ["GET", "POST"],
+            credentials: true
         }
     });
     io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
@@ -51,15 +53,12 @@ const initIO = (httpServer) => {
                 return;
             }
             Ticket_1.default.findByPk(ticketId).then(ticket => {
-                // only admin and the current user of the ticket
-                // can join the message channel of it.
-                if (ticket &&
-                    ((ticket === null || ticket === void 0 ? void 0 : ticket.userId) === user.id || user.profile === "admin")) {
+                if (ticket && ((ticket === null || ticket === void 0 ? void 0 : ticket.userId) === user.id || user.profile === "admin")) {
                     logger_1.logger.debug(`User ${user.id} joined ticket ${ticketId} channel`);
                     socket.join(ticketId);
                 }
                 else {
-                    logger_1.logger.info(`Invalid attempt to join chanel of ticket ${ticketId} by user ${user.id}`);
+                    logger_1.logger.info(`Invalid attempt to join channel of ticket ${ticketId} by user ${user.id}`);
                 }
             }, error => {
                 logger_1.logger.error(error, `Error fetching ticket ${ticketId}`);
@@ -67,12 +66,10 @@ const initIO = (httpServer) => {
         });
         socket.on("joinNotification", () => {
             if (user.profile === "admin") {
-                // admin can join all notifications
                 logger_1.logger.debug(`Admin ${user.id} joined the notification channel.`);
                 socket.join("notification");
             }
             else {
-                // normal users join notifications of the queues they participate
                 user.queues.forEach(queue => {
                     logger_1.logger.debug(`User ${user.id} joined queue ${queue.id} channel.`);
                     socket.join(`queue-${queue.id}-notification`);
@@ -81,12 +78,10 @@ const initIO = (httpServer) => {
         });
         socket.on("joinTickets", (status) => {
             if (user.profile === "admin") {
-                // only admin can join the notifications of a particular status
                 logger_1.logger.debug(`Admin ${user.id} joined ${status} tickets channel.`);
                 socket.join(`${status}`);
             }
             else {
-                // normal users can only receive messages of the queues they participate
                 user.queues.forEach(queue => {
                     logger_1.logger.debug(`User ${user.id} joined queue ${queue.id} ${status} tickets channel.`);
                     socket.join(`queue-${queue.id}-${status}`);

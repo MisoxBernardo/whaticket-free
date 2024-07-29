@@ -6,19 +6,18 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import * as Sentry from "@sentry/node";
 import { messageQueue, sendScheduledMessages } from "./queues";
-
 import "./database";
 import uploadConfig from "./config/upload";
 import AppError from "./errors/AppError";
 import routes from "./routes";
 import { logger } from "./utils/logger";
 
-// Configuração do CORS para aceitar todas as origens e métodos
+// Configuração do CORS
 const corsOptions = {
-  origin: '*',  // Aceita todas as origens
-  methods: '*', // Aceita todos os métodos
-  allowedHeaders: '*', // Aceita todos os cabeçalhos
-  credentials: true
+  origin: 'http://fenix.ticket:3000', // Origem permitida
+  methods: ['GET', 'POST'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
+  credentials: true // Permite cookies e outras credenciais
 };
 
 const app = express();

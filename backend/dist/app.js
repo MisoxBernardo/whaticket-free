@@ -48,25 +48,20 @@ const upload_1 = __importDefault(require("./config/upload"));
 const AppError_1 = __importDefault(require("./errors/AppError"));
 const routes_1 = __importDefault(require("./routes"));
 const logger_1 = require("./utils/logger");
-Sentry.init({ dsn: process.env.SENTRY_DSN });
+// Configuração do CORS
+const corsOptions = {
+    origin: 'http://fenix.ticket:3000',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true // Permite cookies e outras credenciais
+};
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({
-    credentials: true,
-    origin: process.env.FRONTEND_URL
-}));
-app.use(express_1.default.json({
-    limit: '50mb'
-}));
+// Middleware para CORS
+app.use((0, cors_1.default)(corsOptions));
+app.use(express_1.default.json({ limit: '50mb' }));
 app.use((0, cookie_parser_1.default)());
-app.use(express_1.default.urlencoded({
-    limit: "250mb",
-    parameterLimit: 200000,
-    extended: true
-}));
-app.set("queues", {
-    messageQueue: queues_1.messageQueue,
-    sendScheduledMessages: queues_1.sendScheduledMessages
-});
+app.use(express_1.default.urlencoded({ limit: "250mb", parameterLimit: 200000, extended: true }));
+app.set("queues", { messageQueue: queues_1.messageQueue, sendScheduledMessages: queues_1.sendScheduledMessages });
 app.use(Sentry.Handlers.requestHandler());
 app.use("/public", express_1.default.static(upload_1.default.directory));
 app.use(routes_1.default);

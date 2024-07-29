@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8081",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
@@ -11,11 +10,12 @@
     "@testing-library/react": "^11.0.4",
     "@testing-library/user-event": "^12.1.7",
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "emoji-mart": "^3.0.1",
     "formik": "^2.2.0",
     "i18next": "^19.8.2",
-    "i18next-browser-languagedetector": "^6.0.1", 
+    "i18next-browser-languagedetector": "^6.0.1",
     "markdown-to-jsx": "^7.1.0",
     "material-ui-color": "^1.2.0",
     "mic-recorder-to-mp3": "^2.2.2",
@@ -34,11 +34,11 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "NODE_OPTIONS='--max_old_space_size=8192 --openssl-legacy-provider' react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-},
+    "start": "react-scripts start",
+    "build": "NODE_OPTIONS='--max_old_space_size=8192 --openssl-legacy-provider' react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
