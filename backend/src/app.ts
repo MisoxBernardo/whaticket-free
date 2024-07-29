@@ -13,11 +13,11 @@ import AppError from "./errors/AppError";
 import routes from "./routes";
 import { logger } from "./utils/logger";
 
-// Configuração do CORS
+// Configuração do CORS para aceitar todas as origens e métodos
 const corsOptions = {
-  origin: ["http://localhost:3000", "http://fenix.ticket:3000"], // Adicione outras origens se necessário
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: '*',  // Aceita todas as origens
+  methods: '*', // Aceita todos os métodos
+  allowedHeaders: '*', // Aceita todos os cabeçalhos
   credentials: true
 };
 
@@ -25,7 +25,6 @@ const app = express();
 
 // Middleware para CORS
 app.use(cors(corsOptions));
-//
 
 app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
