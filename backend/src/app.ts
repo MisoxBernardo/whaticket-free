@@ -14,10 +14,17 @@ import { logger } from "./utils/logger";
 
 // Configuração do CORS
 const corsOptions = {
+<<<<<<< HEAD
   origin: 'http://fenix.ticket:3000', // Origem permitida
   methods: ['GET', 'POST'], // Métodos permitidos
   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
   credentials: true // Permite cookies e outras credenciais
+=======
+  origin: '*', // Adicione outras origens se necessário
+  methods: '*',
+  allowedHeaders:'*',
+credentials: true
+>>>>>>> 973e29b1c (Resolvendo sockets)
 };
 
 const app = express();
@@ -31,11 +38,15 @@ app.use(express.urlencoded({ limit: "250mb", parameterLimit: 200000, extended: t
 
 app.set("queues", { messageQueue, sendScheduledMessages });
 
+<<<<<<< HEAD
 app.use(Sentry.Handlers.requestHandler());
+=======
+//app.use(Sentry.Handlers.requestHandler());
+>>>>>>> 973e29b1c (Resolvendo sockets)
 app.use("/public", express.static(uploadConfig.directory));
 app.use(routes);
 
-app.use(Sentry.Handlers.errorHandler());
+//app.use(Sentry.Handlers.errorHandler());
 
 app.use(async (err: Error, req: Request, res: Response, _: NextFunction) => {
   if (err instanceof AppError) {

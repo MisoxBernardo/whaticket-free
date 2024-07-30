@@ -13,9 +13,15 @@ let io: SocketIO;
 export const initIO = (httpServer: Server): SocketIO => {
   io = new SocketIO(httpServer, {
     cors: {
+<<<<<<< HEAD
       origin: "http://fenix.ticket:3000", // Origem permitida
       methods: ["GET", "POST"],
       credentials: true
+=======
+      origin: '*', // Adicione outras origens se necessário
+      methods: '*',
+credentials: true
+>>>>>>> 973e29b1c (Resolvendo sockets)
     }
   });
 
